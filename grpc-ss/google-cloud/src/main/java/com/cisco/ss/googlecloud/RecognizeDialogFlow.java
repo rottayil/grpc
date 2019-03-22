@@ -67,9 +67,8 @@ public class RecognizeDialogFlow {
         // Instantiates a client
 
         // Set the session name using the sessionId (UUID) and projectID (my-project-id)
-       // SessionsSettings sessionSettings = getSessionSettings();
-      //  sessionsClient = SessionsClient.create(sessionSettings);
-        sessionsClient = SessionsClient.create();
+        SessionsSettings sessionSettings = getSessionSettings();
+        sessionsClient = SessionsClient.create(sessionSettings);
 
         SessionName session = SessionName.of(projectId, sessionId);
         System.out.println("Session Path: " + session.toString());
