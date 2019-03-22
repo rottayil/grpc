@@ -1,0 +1,22 @@
+syntax="proto3";
+import "google/protobuf/struct.proto";
+option java_package="com.cisco.speechserver.grpc";
+option java_multiple_files=true;
+
+
+
+message RecognizeRequest {
+    bytes audio = 1;
+    google.protobuf.Struct inputConfig = 2;
+
+}
+
+message RecognizeResponse {
+    bytes audio=1;
+    google.protobuf.Struct result = 2;
+
+}
+
+service RecognizeService {
+    rpc recognize (stream RecognizeRequest) returns (RecognizeResponse) {};
+}
