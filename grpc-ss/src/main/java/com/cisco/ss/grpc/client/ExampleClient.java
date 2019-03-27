@@ -4,24 +4,51 @@ import com.google.protobuf.ByteString;
 import org.apache.commons.io.FileUtils;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.*;
+import java.util.concurrent.CountDownLatch;
 
-public class ExampleClient {
+public class ExampleClient implements Runnable {
     private final static int PORT =55555;
-    private final static String AUDIO_FILE="book_a_room.wav";
+    private final static String AUDIO_FILE="book_a_room_alaw.wav";
+    static CountDownLatch latch = new CountDownLatch(1);
+    static int i = 0;
 
+    @Override
+    public void run() {
+        try {
+            Thread.currentThread().setName("Thread" + ++i);
+            int j = i;
+            latch.await();
+            process("localhost", "out" + j  + ".wav");
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public static void main(String[] args) throws InterruptedException, IOException, UnsupportedAudioFileException {
         String host = "localhost";
         if (args.length > 0){
             host = args[0];
         }
-        host = "10.232.21.42";
+//        for (int k = 0;k < 10; k++) {
+//            new Thread(new ExampleClient()).start();
+//        }
+//
+//        Thread.sleep(2000);
+//        System.out.println("firing now");
+//        latch.countDown();
+
+
+
+  //      host = "10.232.21.42";
         process(host, "out1.wav");
-        System.out.println("===========================second time");
-        process(host, "out2.wav");
-        System.out.println("===========================third time");
-        process(host, "out3.wav");
+//        System.out.println("===========================second time");
+//        process(host, "out2.wav");
+//        System.out.println("===========================third time");
+//        process(host, "out3.wav");
     }
 
     private static byte[] getBytesFromInputStream(InputStream iStream) throws IOException {
@@ -41,7 +68,7 @@ public class ExampleClient {
         File file = new File(outFileName);
         try {
             FileUtils.writeByteArrayToFile(file, result.getAudioBytes());
-            System.out.println("output audio in " + file.getAbsolutePath());
+            System.out.println(Thread.currentThread().getName() + ":output audio in " + file.getAbsolutePath());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,6 +89,7 @@ public class ExampleClient {
            client.sendAudioChunk(ByteString.copyFrom(buffer, 0, bytes).toByteArray());
         }
     }
+
 
 
 }

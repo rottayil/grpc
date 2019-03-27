@@ -27,10 +27,10 @@ public class RecognizeDialogFlow {
     ResponseApiStreamingObserver responseObserver = new ResponseApiStreamingObserver();
     SessionsClient sessionsClient;
 
-    final AudioEncoding audioEncoding = AudioEncoding.AUDIO_ENCODING_MULAW;
-    final int sampleRateHertz = 8000;
-//    final AudioEncoding audioEncoding = AudioEncoding.AUDIO_ENCODING_LINEAR_16;
-//    final int sampleRateHertz = 16000;
+//    final AudioEncoding audioEncoding = AudioEncoding.AUDIO_ENCODING_MULAW;
+//    final int sampleRateHertz = 8000;
+    final AudioEncoding audioEncoding = AudioEncoding.AUDIO_ENCODING_LINEAR_16;
+    final int sampleRateHertz = 16000;
 
     public static RecognizeDialogFlow newInstance(String projectId,
                                                   String sessionId,

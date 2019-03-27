@@ -22,11 +22,11 @@ public class RecognizeServiceImpl extends RecognizeServiceGrpc.RecognizeServiceI
 
         return  new StreamObserver<RecognizeRequest>() {
             RecognizeDialogFlow dialogFlow;
-            Map<String, Value> configMap= null;
+            Map<String, String> configMap= null;
             @Override
             public void onNext(RecognizeRequest request) {
                 if (dialogFlow == null) {
-                    configMap = request.getInputConfig().getFieldsMap();
+                    configMap = request.getInputConfigMap();
                     try {
                         System.out.println("initializing with config:" + configMap);
                         dialogFlow = RecognizeDialogFlow.newInstance(PROJECT_ID, SESSION_ID, true, LANGUAGE_CODE);
@@ -36,7 +36,7 @@ public class RecognizeServiceImpl extends RecognizeServiceGrpc.RecognizeServiceI
 
                 }
                 ByteString audioByteString = request.getAudio();
-                if (null != audioByteString) {
+                if (null != audioByteString && !audioByteString.isEmpty()) {
                     dialogFlow.sendAudio(audioByteString);
                 }
             }
@@ -52,8 +52,7 @@ public class RecognizeServiceImpl extends RecognizeServiceGrpc.RecognizeServiceI
                 try {
                     ResponseResult responseResult = dialogFlow.detectAudio();
 
-                Struct struct = Struct.newBuilder().putFields("response", Value.newBuilder().setStringValue(responseResult.getFulfillmentText()).build()).build();
-                responseObserver.onNext(RecognizeResponse.newBuilder().setAudio(ByteString.copyFrom(responseResult.getAudio())).setResult(struct).build());
+                responseObserver.onNext(RecognizeResponse.newBuilder().setAudio(ByteString.copyFrom(responseResult.getAudio())).setResult(responseResult.getFulfillmentText()).build());
                 responseObserver.onCompleted();
             }
                 catch (Throwable throwable) {
